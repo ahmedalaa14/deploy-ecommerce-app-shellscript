@@ -69,3 +69,21 @@ sudo systemctl enable firewalld
 
 # Check FirewallD Service is running
 check_service_status firewalld
+
+# Install and configure Maria-DB
+print_color "green" "Installing MariaDB Server.."
+sudo yum install -y mariadb-server
+
+print_color "green" "Starting MariaDB Server.."
+sudo service mariadb start
+sudo systemctl enable mariadb
+
+# Check FirewallD Service is running
+check_service_status mariadb
+
+# Configure Firewall rules for Database
+print_color "green" "Configuring FirewallD rules for database.."
+sudo firewall-cmd --permanent --zone=public --add-port=3306/tcp
+sudo firewall-cmd --reload
+
+is_firewalld_rule_configured 3306
