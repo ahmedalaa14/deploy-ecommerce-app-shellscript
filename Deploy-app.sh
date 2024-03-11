@@ -144,3 +144,24 @@ sudo sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf
 print_color "green" "Start httpd service.."
 sudo service httpd start
 sudo systemctl enable httpd
+
+ Check FirewallD Service is running
+check_service_status httpd
+
+# Download code
+print_color "green" "Install GIT.."
+sudo yum install -y git
+sudo git clone https://github.com/kodekloudhub/learning-app-ecommerce.git /var/www/html/
+
+print_color "green" "Updating index.php.."
+sudo sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php
+
+print_color "green" "---------------- Setup Web Server - Finished ------------------"
+
+# Test Script
+web_page=$(curl http://localhost)
+
+for item in Laptop Drone VR Watch Phone
+do
+  check_item "$web_page" $item
+done
