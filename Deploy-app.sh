@@ -120,3 +120,27 @@ else
   print_color "green" "Inventory data not loaded into MySQl"
   exit 1
 fi
+
+
+print_color "green" "---------------- Setup Database Server - Finished ------------------"
+
+print_color "green" "---------------- Setup Web Server ------------------"
+
+# Install web server packages
+print_color "green" "Installing Web Server Packages .."
+sudo yum install -y httpd php php-mysql
+
+# Configure firewalld rules
+print_color "green" "Configuring FirewallD rules.."
+sudo firewall-cmd --permanent --zone=public --add-port=80/tcp
+sudo firewall-cmd --reload
+
+is_firewalld_rule_configured 80
+
+# Update index.php
+sudo sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf
+
+# Start httpd service
+print_color "green" "Start httpd service.."
+sudo service httpd start
+sudo systemctl enable httpd
