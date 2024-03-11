@@ -42,3 +42,17 @@ function is_firewalld_rule_configured(){
     exit 1
   fi
 }
+
+# Check if a given item is present in an output
+# Arguments:
+#   1 - Output
+#   2 - Item
+
+function check_item(){
+  if [[ $1 = *$2* ]]
+  then
+    print_color "green" "Item $2 is present on the web page"
+  else
+    print_color "red" "Item $2 is not present on the web page"
+  fi
+}
