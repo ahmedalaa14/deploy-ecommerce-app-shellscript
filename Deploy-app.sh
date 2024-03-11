@@ -87,3 +87,36 @@ sudo firewall-cmd --permanent --zone=public --add-port=3306/tcp
 sudo firewall-cmd --reload
 
 is_firewalld_rule_configured 3306
+
+# Configuring Database
+print_color "green" "Setting up database.."
+cat > setup-db.sql <<-EOF
+  CREATE DATABASE ecomdb;
+  CREATE USER 'ecomuser'@'localhost' IDENTIFIED BY 'ecompassword';
+  GRANT ALL PRIVILEGES ON *.* TO 'ecomuser'@'localhost';
+  FLUSH PRIVILEGES;
+EOF
+
+sudo mysql < setup-db.sql
+
+# Loading inventory into Database
+print_color "green" "Loading inventory data into database"
+cat > db-load-script.sql <<-EOF
+USE ecomdb;
+CREATE TABLE products (id mediumint(8) unsigned NOT NULL auto_increment,Name varchar(255) default NULL,Price varchar(255) default NULL, ImageUrl varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1;
+
+INSERT INTO products (Name,Price,ImageUrl) VALUES ("Laptop","100","c-1.png"),("Drone","200","c-2.png"),("VR","300","c-3.png"),("Tablet","50","c-5.png"),("Watch","90","c-6.png"),("Phone Covers","20","c-7.png"),("Phone","80","c-8.png"),("Laptop","150","c-4.png");
+
+EOF
+
+sudo mysql < db-load-script.sql
+
+mysql_db_results=$(sudo mysql -e "use ecomdb; select * from products;")
+
+if [[ $mysql_db_results == *Laptop* ]]
+then
+  print_color "green" "Inventory data loaded into MySQl"
+else
+  print_color "green" "Inventory data not loaded into MySQl"
+  exit 1
+fi
