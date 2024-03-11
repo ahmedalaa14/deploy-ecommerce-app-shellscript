@@ -56,3 +56,16 @@ function check_item(){
     print_color "red" "Item $2 is not present on the web page"
   fi
 }
+
+
+echo "---------------- Setup Database Server ------------------"
+# Install and configure firewalld
+print_color "green" "Installing FirewallD.. "
+sudo yum install -y firewalld
+
+print_color "green" "Installing FirewallD.. "
+sudo service firewalld start
+sudo systemctl enable firewalld
+
+# Check FirewallD Service is running
+check_service_status firewalld
