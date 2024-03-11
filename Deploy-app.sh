@@ -25,3 +25,20 @@ function check_service_status(){
     exit 1
   fi
 }
+
+#check the status of firewalld rule. if not configured exit.
+#arguments
+# port number eg:3306, 80
+
+function is_firewalld_rule_configured(){
+
+  firewalld_ports=$(sudo firewall-cmd --list-all --zone=public | grep ports)
+
+  if [[ $firewalld_ports == *$1* ]]
+  then
+    echo "FirewallD has port $1 configured"
+  else
+    echo "FirewallD port $1 is not configured"
+    exit 1
+  fi
+}
